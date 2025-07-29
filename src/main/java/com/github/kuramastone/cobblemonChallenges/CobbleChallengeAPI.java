@@ -25,8 +25,8 @@ public class CobbleChallengeAPI implements SimpleAPI {
     private Map<UUID, PlayerProfile> profileMap;
 
     public CobbleChallengeAPI() {
-        profileMap = new HashMap<>();
-        allChallengesByName = new HashMap<>();
+        profileMap = Collections.synchronizedMap(new HashMap<>());
+        allChallengesByName = Collections.synchronizedMap(new HashMap<>());
     }
 
     public void init() {
@@ -44,7 +44,7 @@ public class CobbleChallengeAPI implements SimpleAPI {
 
                 YamlConfig section = data.getSection(strUUID);
                 // legacy from when they were saved as a list
-                List<CompletedChallenge> completedChallenges = new ArrayList<>();
+                List<CompletedChallenge> completedChallenges = Collections.synchronizedList(new ArrayList<>());
                 profile.setCompletedChallenges(completedChallenges);
 
                 if (section.containsKey("completed-map")) {
@@ -69,28 +69,30 @@ public class CobbleChallengeAPI implements SimpleAPI {
                         YamlConfig listSection = progressionSection.getSection(strList);
                         ChallengeList list = getChallengeList(strList);
 
-                        // iterate over each challenge
-                        for (String strChallenge : listSection.getKeys("", false)) {
-                            Challenge challenge = list.getChallenge(strChallenge);
-                            // removed challenges are no longer loaded, ignore null challenges
-                            if (challenge != null) {
-                                ChallengeProgress progress = list.buildNewProgressForQuest(challenge, profile);
-                                YamlConfig challengeSection = listSection.getSection(strChallenge);
+                        if(list != null) {
+                            // iterate over each challenge
+                            for (String strChallenge : listSection.getKeys("", false)) {
+                                Challenge challenge = list.getChallenge(strChallenge);
+                                // removed challenges are no longer loaded, ignore null challenges
+                                if (challenge != null) {
+                                    ChallengeProgress progress = list.buildNewProgressForQuest(challenge, profile);
+                                    YamlConfig challengeSection = listSection.getSection(strChallenge);
 
-                                progress.setStartTime(challengeSection.containsKey("startTime") ?
-                                        challengeSection.getLong("startTime") : System.currentTimeMillis());
+                                    progress.setStartTime(challengeSection.containsKey("startTime") ?
+                                            challengeSection.getLong("startTime") : System.currentTimeMillis());
 
-                                // iterate over each requirement for challenge
-                                int index = 0;
-                                for (Pair<String, Progression<?>> progSet : progress.getProgressionMap()) {
-                                    YamlConfig progSection = challengeSection.getSection(index++ + "." + progSet.getKey());
+                                    // iterate over each requirement for challenge
+                                    int index = 0;
+                                    for (Pair<String, Progression<?>> progSet : progress.getProgressionMap()) {
+                                        YamlConfig progSection = challengeSection.getSection(index++ + "." + progSet.getKey());
 
-                                    // if requirements change, this section may be null. ignore it.
-                                    if (progSection != null)
-                                        progSet.getValue().loadFrom(uuid, progSection);
+                                        // if requirements change, this section may be null. ignore it.
+                                        if (progSection != null)
+                                            progSet.getValue().loadFrom(uuid, progSection);
+                                    }
+
+                                    profile.addActiveChallenge(progress);
                                 }
-
-                                profile.addActiveChallenge(progress);
                             }
                         }
                     }

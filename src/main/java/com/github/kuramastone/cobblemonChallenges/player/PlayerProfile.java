@@ -34,9 +34,9 @@ public class PlayerProfile {
         this.api = api;
         this.uuid = uuid;
 
-        activeChallenges = new HashMap<>();
-        completedChallenges = new ArrayList<>();
-        rewardsToGive = new ArrayList<>();
+        activeChallenges = Collections.synchronizedMap(new HashMap<>());
+        completedChallenges = Collections.synchronizedList(new ArrayList<>());
+        rewardsToGive = Collections.synchronizedList(new ArrayList<>());
 
         server = CobbleChallengeMod.getMinecraftServer();
         syncPlayer(); // try syncing player object

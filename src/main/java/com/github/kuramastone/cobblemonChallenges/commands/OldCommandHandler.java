@@ -5,12 +5,9 @@ import com.github.kuramastone.cobblemonChallenges.CobbleChallengeMod;
 import com.github.kuramastone.cobblemonChallenges.challenges.ChallengeList;
 import com.github.kuramastone.cobblemonChallenges.guis.ChallengeListGUI;
 import com.github.kuramastone.cobblemonChallenges.guis.ChallengeMenuGUI;
-import com.github.kuramastone.cobblemonChallenges.player.ChallengeProgress;
 import com.github.kuramastone.cobblemonChallenges.player.PlayerProfile;
 import com.github.kuramastone.cobblemonChallenges.utils.FabricAdapter;
 import com.github.kuramastone.cobblemonChallenges.utils.PermissionUtils;
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -18,18 +15,16 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.concurrent.CompletableFuture;
 
-public class CommandHandler {
+public class OldCommandHandler {
 
     private static CobbleChallengeAPI api;
 
@@ -39,18 +34,18 @@ public class CommandHandler {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(Commands.literal("challenges")
                     .requires(source -> hasPermission(source, "challenges.commands.challenge"))
-                    .executes(CommandHandler::handleChallengeBaseCommand)
+                    .executes(OldCommandHandler::handleChallengeBaseCommand)
                     .then(Commands.argument("list", StringArgumentType.word())
-                            .suggests(CommandHandler::handleListSuggestions)
-                            .executes(CommandHandler::handleChallengeListCommand)
+                            .suggests(OldCommandHandler::handleListSuggestions)
+                            .executes(OldCommandHandler::handleChallengeListCommand)
                     )
                     .then(Commands.literal("reload")
                             .requires(source -> hasPermission(source, "challenges.commands.admin.reload"))
-                            .executes(CommandHandler::handleReloadCommand))
+                            .executes(OldCommandHandler::handleReloadCommand))
                     .then(Commands.literal("reset")
                             .requires(source -> hasPermission(source, "challenges.commands.admin.restart"))
                             .then(Commands.argument("player", EntityArgument.player())
-                                    .executes(CommandHandler::handleRestartCommand)))
+                                    .executes(OldCommandHandler::handleRestartCommand)))
             );
         });
 

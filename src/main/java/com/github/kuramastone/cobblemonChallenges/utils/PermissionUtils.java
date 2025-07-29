@@ -9,9 +9,6 @@ import net.minecraft.world.entity.player.Player;
 public class PermissionUtils {
 
     public static boolean hasPermission(Player player, String permission) {
-        if(!FabricLoader.getInstance().isModLoaded("luckperms")) {
-            return player.hasPermissions(2);
-        }
         LuckPerms api = LuckPermsProvider.get();
 
         User user = api.getUserManager().getUser(player.getUUID());

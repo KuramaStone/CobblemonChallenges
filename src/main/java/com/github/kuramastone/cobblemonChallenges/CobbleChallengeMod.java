@@ -2,7 +2,10 @@ package com.github.kuramastone.cobblemonChallenges;
 
 import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
-import com.github.kuramastone.cobblemonChallenges.commands.CommandHandler;
+import com.github.kuramastone.cobblemonChallenges.challenges.ChallengeList;
+import com.github.kuramastone.cobblemonChallenges.commands.ChallengeListArgument;
+import com.github.kuramastone.cobblemonChallenges.commands.ChallengesCommands;
+import com.github.kuramastone.cobblemonChallenges.commands.OldCommandHandler;
 import com.github.kuramastone.cobblemonChallenges.events.*;
 import com.github.kuramastone.cobblemonChallenges.listeners.ChallengeListener;
 import com.github.kuramastone.cobblemonChallenges.listeners.TickScheduler;
@@ -14,8 +17,13 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import revxrsal.commands.Lamp;
+import revxrsal.commands.fabric.FabricLamp;
+import revxrsal.commands.fabric.FabricLampConfig;
+import revxrsal.commands.fabric.actor.FabricCommandActor;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 
 public class CobbleChallengeMod implements ModInitializer {
 
@@ -35,8 +43,18 @@ public class CobbleChallengeMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> onStopped());
         startSaveScheduler();
         startRepeatableScheduler();
-        CommandHandler.register(); // register commands
+//        OldCommandHandler.register();
+        registerCommands();
         registerTrackedEvents();
+    }
+
+    private void registerCommands() {
+        Lamp<FabricCommandActor> lamp = FabricLamp.builder(FabricLampConfig.createDefault())
+                .parameterTypes( it -> {
+                    it.addParameterType(ChallengeList.class, new ChallengeListArgument(api));
+                })
+                .build();
+        lamp.register(new ChallengesCommands());
     }
 
     private void onServerStarted(MinecraftServer server) {
@@ -46,14 +64,14 @@ public class CobbleChallengeMod implements ModInitializer {
 
 
     private void startSaveScheduler() {
-        TickScheduler.scheduleRepeating(20*60*15, ()-> {
-            api.saveProfiles();
+        TickScheduler.scheduleRepeating(20 * 60 * 30, () -> {
+            CompletableFuture.runAsync(() -> api.saveProfiles());
             return true;
         });
     }
 
     private void startRepeatableScheduler() {
-        TickScheduler.scheduleRepeating(20, ()-> {
+        TickScheduler.scheduleRepeating(20, () -> {
 
             for (PlayerProfile profile : api.getProfiles()) {
                 profile.refreshRepeatableChallenges();

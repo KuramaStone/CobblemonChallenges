@@ -58,6 +58,10 @@ repositories {
     maven("https://maven.impactdev.net/repository/development/")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://maven.fabricmc.net/")
+
+    maven(url = "https://maven.enginehub.org/repo/")
+    maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" }
+
 }
 
 val fabric_version: String by project
@@ -91,6 +95,10 @@ dependencies {
     includeAndImplement("net.kyori:adventure-text-serializer-plain:4.14.0")
 
     modImplementation("com.cobblemon:fabric:1.6.1+1.21.1-SNAPSHOT")
+    // commands
+    shade("io.github.revxrsal:lamp.common:4.0.0-rc.9")
+    modShade("io.github.revxrsal:lamp.fabric:4.0.0-rc.9")
+    shade("io.github.revxrsal:lamp.brigadier:4.0.0-rc.9")
 
 
     compileOnly("net.luckperms:api:5.4")

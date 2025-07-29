@@ -115,6 +115,7 @@ triggers:
     time_of_day: any
     is_legendary: false
     is_ultra_beast: false
+    required-tags: any
   complete_challenge:
     amount: 1
     challenge-list: any # This is the challenge list it must come from
@@ -127,6 +128,7 @@ triggers:
     is_ultra_beast: false
     effectiveness: any/1.0/0.5/2.0
     npc-player-gymleader-wild: any
+    required-tags: any
   Evolve_Pokemon: # Evolve any pokemon
     pokename: any
     amount: 1
@@ -134,6 +136,7 @@ triggers:
     type: any
     ball: any
     time_of_day: any
+    required-tags: any
 
   mine_block: # When a block is broken
     type: any/stone
@@ -153,6 +156,7 @@ triggers:
   use_rare_candy:
     pokename: any
     amount: 1
+    required-tags: any
   pokemon_seen: # When a player has fought this pokemon in battle
     amount: 100
     pokename: any
@@ -169,6 +173,7 @@ triggers:
     time_of_day: any
     is_legendary: false
     is_ultra_beast: false
+    required-tags: any
   level_up_to: # When their level reaches a certain value
     target level: 100
     pokename: any
@@ -179,6 +184,7 @@ triggers:
     time_of_day: any
     is_legendary: false
     is_ultra_beast: false
+    required-tags: any
   hatch_egg: # When an egg has finished hatching
     pokename: any
     shiny: false
@@ -188,6 +194,7 @@ triggers:
     time_of_day: any
     is_legendary: false
     is_ultra_beast: false
+    required-tags: any
   trades_completed: # When the trade is completed. This is for the pokemon they sent themselves, not received.
     pokename: any
     shiny: false
@@ -197,6 +204,7 @@ triggers:
     time_of_day: any
     is_legendary: false
     is_ultra_beast: false
+    required-tags: any
   exp_gained: # When exp is gained by a pokemon
     pokename: any
     shiny: false
@@ -206,4 +214,5 @@ triggers:
     time_of_day: any
     is_legendary: false
     is_ultra_beast: false
+    required-tags: any
 

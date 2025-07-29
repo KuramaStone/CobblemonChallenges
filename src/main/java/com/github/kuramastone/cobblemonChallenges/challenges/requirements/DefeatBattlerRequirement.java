@@ -44,6 +44,8 @@ public class DefeatBattlerRequirement implements Requirement {
     private String effectiveness = "any";
     @YamlKey("npc-player-gymleader-wild")
     private String enemyType = "any";
+    @YamlKey("required-tags")
+    private String requiredLabels = "any";
 
     public DefeatBattlerRequirement() {
     }
@@ -104,6 +106,9 @@ public class DefeatBattlerRequirement implements Requirement {
             if(player == null)
                 return false;
 
+            if(event.getWasWildCapture())
+                return false;
+
             // return if the player didnt win
             if(!event.getWinners().contains(player))
                 return false;
@@ -143,6 +148,10 @@ public class DefeatBattlerRequirement implements Requirement {
 
                 if (!StringUtils.doesStringContainCategory(requirement.pokename.split("/"), pokename)) {
                     continue;
+                }
+
+                if(!StringUtils.doesListMeetRequiredList(requirement.requiredLabels.split("/"), pokemon.getForm().getLabels())) {
+                    return false;
                 }
 
                 if (requirement.shiny && !shiny) {

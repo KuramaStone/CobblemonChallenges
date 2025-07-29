@@ -10,6 +10,7 @@ import com.github.kuramastone.cobblemonChallenges.player.PlayerProfile;
 import com.github.kuramastone.cobblemonChallenges.utils.PixelmonUtils;
 import com.github.kuramastone.cobblemonChallenges.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ public class LevelUpToRequirement implements Requirement {
     private boolean is_ultra_beast = false;
     @YamlKey("target_level")
     private int targetLevel = 100;
+    @YamlKey("required-tags")
+    private String requiredLabels = "any";
 
     public LevelUpToRequirement() {
     }
@@ -101,6 +104,10 @@ public class LevelUpToRequirement implements Requirement {
             boolean is_ultra_beast = pokemon.isUltraBeast();
 
             if(event.getNewLevel() != requirement.targetLevel){
+                return false;
+            }
+
+            if(!StringUtils.doesListMeetRequiredList(requirement.requiredLabels.split("/"), pokemon.getForm().getLabels())) {
                 return false;
             }
 

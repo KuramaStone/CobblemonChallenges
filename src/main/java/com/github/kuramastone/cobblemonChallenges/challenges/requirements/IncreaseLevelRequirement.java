@@ -10,6 +10,7 @@ import com.github.kuramastone.cobblemonChallenges.player.PlayerProfile;
 import com.github.kuramastone.cobblemonChallenges.utils.PixelmonUtils;
 import com.github.kuramastone.cobblemonChallenges.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,6 +36,8 @@ public class IncreaseLevelRequirement implements Requirement {
     private boolean is_legendary = false;
     @YamlKey("is_ultra_beast")
     private boolean is_ultra_beast = false;
+    @YamlKey("required-tags")
+    private String requiredLabels = "any";
 
     public IncreaseLevelRequirement() {
     }
@@ -81,7 +84,10 @@ public class IncreaseLevelRequirement implements Requirement {
         public void progress(Object obj) {
             if (matchesMethod(obj)) {
                 if (meetsCriteria(getType().cast(obj))) {
-                    progressAmount++;
+                    LevelUpEvent event = getType().cast(obj);
+                    int levelsChanged = event.getNewLevel() - event.getOldLevel();
+                    progressAmount = Math.min(requirement.amount, progressAmount + levelsChanged);
+                    event.getOldLevel();
                 }
             }
         }
@@ -99,6 +105,10 @@ public class IncreaseLevelRequirement implements Requirement {
             boolean is_ultra_beast = pokemon.isUltraBeast();
 
             if (!StringUtils.doesStringContainCategory(requirement.pokename.split("/"), pokename)) {
+                return false;
+            }
+
+            if(!StringUtils.doesListMeetRequiredList(requirement.requiredLabels.split("/"), pokemon.getForm().getLabels())) {
                 return false;
             }
 

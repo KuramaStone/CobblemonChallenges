@@ -7,6 +7,8 @@ import com.github.kuramastone.cobblemonChallenges.CobbleChallengeMod;
 import com.github.kuramastone.cobblemonChallenges.player.PlayerProfile;
 import com.github.kuramastone.cobblemonChallenges.utils.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class UseRareCandyRequirement implements Requirement {
@@ -16,6 +18,8 @@ public class UseRareCandyRequirement implements Requirement {
     private String pokename = "any"; // Default to "any" if not specified
     @YamlKey("amount")
     private int amount = 1;
+    @YamlKey("required-tags")
+    private String requiredLabels = "any";
 
     public UseRareCandyRequirement() {
     }
@@ -57,6 +61,10 @@ public class UseRareCandyRequirement implements Requirement {
         public boolean meetsCriteria(ExperienceCandyUseEvent event) {
             // Get the Pokémon name being used with the Rare Candy
             String pokemonName = event.getPokemon().getSpecies().getName();
+
+            if(!StringUtils.doesListMeetRequiredList(requirement.requiredLabels.split("/"), event.getPokemon().getForm().getLabels())) {
+                return false;
+            }
 
             // Check if the Pokémon name meets the requirement
             return StringUtils.doesStringContainCategory(requirement.pokename.split("/"), pokemonName);

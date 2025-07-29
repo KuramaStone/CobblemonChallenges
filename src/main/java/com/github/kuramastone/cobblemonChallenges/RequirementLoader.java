@@ -58,7 +58,7 @@ public class RequirementLoader {
         Class<? extends Requirement> clazz = requirementMap.get(requirementType);
 
         if(clazz == null) {
-            CobbleChallengeMod.logger.error(String.format("Cannot load requirement for a requirement '%s' for challenge '%s'. This requirement does not exist.", requirementType, challengeID));
+            CobbleChallengeMod.logger.error("Cannot load requirement for a requirement '{}' for challenge '{}'. This requirement does not exist.", requirementType, challengeID);
             return null;
         }
 

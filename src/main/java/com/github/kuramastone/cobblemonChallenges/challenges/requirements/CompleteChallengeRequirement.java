@@ -58,7 +58,7 @@ public class CompleteChallengeRequirement implements Requirement {
         @Override
         public boolean meetsCriteria(ChallengeCompletedEvent event) {
 
-            if(!StringUtils.doesStringContainCategory(requirement.challengeList.split("/"), event.getChallenge().getName())) {
+            if(!StringUtils.doesStringContainCategory(requirement.challengeList.split("/"), event.getChallengeList().getName())) {
                 return false;
             }
 
